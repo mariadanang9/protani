@@ -21,5 +21,9 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        $this->call([
+            ProtaniSeeder::class, // Panggil Seeder yang baru kita buat
+        ]);
     }
 }

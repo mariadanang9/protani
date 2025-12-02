@@ -3,108 +3,74 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Product; // <-- Import Model Product
+use App\Models\Category; // <-- Import Model Category (untuk filter kategori di masa depan)
 
 class ProductController extends Controller
 {
-    // Dummy data produk pertanian
-    private function getDummyProducts()
+    public function index(Request $request)
     {
-        $categories = ['Sayuran', 'Buah', 'Biji-bijian', 'Rempah'];
-        $products = [
-            ['name' => 'Tomat Organik', 'category' => 'Sayuran', 'price_min' => 15000, 'price_max' => 25000],
-            ['name' => 'Cabai Merah Keriting', 'category' => 'Sayuran', 'price_min' => 30000, 'price_max' => 50000],
-            ['name' => 'Bawang Merah', 'category' => 'Sayuran', 'price_min' => 35000, 'price_max' => 45000],
-            ['name' => 'Kentang', 'category' => 'Sayuran', 'price_min' => 12000, 'price_max' => 18000],
-            ['name' => 'Wortel', 'category' => 'Sayuran', 'price_min' => 10000, 'price_max' => 15000],
-            ['name' => 'Jeruk Medan', 'category' => 'Buah', 'price_min' => 20000, 'price_max' => 30000],
-            ['name' => 'Apel Malang', 'category' => 'Buah', 'price_min' => 25000, 'price_max' => 35000],
-            ['name' => 'Pisang Cavendish', 'category' => 'Buah', 'price_min' => 15000, 'price_max' => 20000],
-            ['name' => 'Mangga Gedong', 'category' => 'Buah', 'price_min' => 18000, 'price_max' => 28000],
-            ['name' => 'Pepaya California', 'category' => 'Buah', 'price_min' => 12000, 'price_max' => 18000],
-            ['name' => 'Beras Premium', 'category' => 'Biji-bijian', 'price_min' => 12000, 'price_max' => 15000],
-            ['name' => 'Jagung Manis', 'category' => 'Biji-bijian', 'price_min' => 8000, 'price_max' => 12000],
-            ['name' => 'Kedelai Lokal', 'category' => 'Biji-bijian', 'price_min' => 10000, 'price_max' => 14000],
-            ['name' => 'Kacang Tanah', 'category' => 'Biji-bijian', 'price_min' => 20000, 'price_max' => 30000],
-            ['name' => 'Gandum', 'category' => 'Biji-bijian', 'price_min' => 15000, 'price_max' => 25000],
-            ['name' => 'Jahe Merah', 'category' => 'Rempah', 'price_min' => 25000, 'price_max' => 40000],
-            ['name' => 'Kunyit', 'category' => 'Rempah', 'price_min' => 18000, 'price_max' => 25000],
-            ['name' => 'Lengkuas', 'category' => 'Rempah', 'price_min' => 15000, 'price_max' => 22000],
-            ['name' => 'Serai', 'category' => 'Rempah', 'price_min' => 10000, 'price_max' => 15000],
-            ['name' => 'Daun Salam', 'category' => 'Rempah', 'price_min' => 5000, 'price_max' => 10000],
-        ];
+        // 1. Inisialisasi Query Builder
+        // Gunakan 'with' untuk eager loading Category
+        $query = Product::with('category');
 
-        $result = [];
-        foreach ($products as $index => $product) {
-            $result[] = [
-                'id' => $index + 1,
-                'name' => $product['name'],
-                'description' => 'Produk pertanian berkualitas tinggi dari petani lokal Indonesia. ' . $product['name'] . ' dipanen segar dan siap untuk didistribusikan.',
-                'price' => rand($product['price_min'], $product['price_max']),
-                'category' => $product['category']
-            ];
+        // --- 2. FITUR PENCARIAN (Search) ---
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($q) use ($searchTerm) {
+                // Pencarian berdasarkan nama produk ATAU deskripsi
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                ->orWhere('description', 'like', '%' . $searchTerm . '%');
+            });
         }
 
-        return $result;
-    }
+        // --- 3. FITUR FILTER HARGA (Price Filter) ---
+        $priceMin = $request->input('price_min');
+        $priceMax = $request->input('price_max');
 
-    public function index()
-    {
-        $products = $this->getDummyProducts();
-        return view('products.list', compact('products'));
-    }
-
-    public function create()
-    {
-        return view('products.form', ['product' => null]);
-    }
-
-    public function store(Request $request)
-    {
-        // Validasi data
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0'
-        ]);
-
-        // Simulasi berhasil menyimpan
-        return redirect()->route('products')->with('success', 'Produk berhasil ditambahkan!');
-    }
-
-    public function show($id)
-    {
-        $products = $this->getDummyProducts();
-        $product = collect($products)->firstWhere('id', $id);
-
-        if (!$product) {
-            abort(404);
+        if ($priceMin) {
+            $query->where('price', '>=', $priceMin);
+        }
+        if ($priceMax) {
+            // Jika priceMax ada, cek jika nilainya lebih besar dari 0
+            if ($priceMax > 0) {
+                $query->where('price', '<=', $priceMax);
+            }
         }
 
-        return view('products.show', compact('product'));
-    }
+        // --- 4. FITUR SORTING (Sort) ---
+        $sort = $request->input('sort');
 
-    public function edit($id)
-    {
-        $products = $this->getDummyProducts();
-        $product = collect($products)->firstWhere('id', $id);
-
-        if (!$product) {
-            abort(404);
+        if ($sort) {
+            switch ($sort) {
+                case 'name_asc':
+                    $query->orderBy('name', 'asc');
+                    break;
+                case 'name_desc':
+                    $query->orderBy('name', 'desc');
+                    break;
+                case 'price_asc':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc');
+                    break;
+                default:
+                    // Default sort jika tidak ada atau tidak valid
+                    $query->latest();
+                    break;
+            }
+        } else {
+            // Default sort jika tidak ada parameter sort
+            $query->latest();
         }
 
-        return view('products.form', compact('product'));
-    }
+        // 5. Eksekusi Query dan ambil hasilnya
+        $products = $query->get();
 
-    public function update(Request $request, $id)
-    {
-        // Validasi data
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0'
-        ]);
+        // 6. Ambil semua Kategori untuk digunakan di Filter/Sidebar View
+        $categories = Category::all();
 
-        // Simulasi berhasil update
-        return redirect()->route('products')->with('success', 'Produk berhasil diperbarui!');
+        return view('products.list', compact('products', 'categories'));
     }
 }
