@@ -9,9 +9,14 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'description'];
+    protected $fillable = [
+        'name',
+        'slug',
+        'description',
+        'icon'
+    ];
 
-    // Relasi One-to-Many: Satu Kategori punya banyak Produk
+    // Relationship: Category has many Products
     public function products()
     {
         return $this->hasMany(Product::class);

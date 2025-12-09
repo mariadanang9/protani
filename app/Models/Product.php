@@ -9,11 +9,47 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['category_id', 'name', 'description', 'price'];
+    protected $fillable = [
+        'category_id',
+        'name',
+        'slug',
+        'description',
+        'price',
+        'stock',
+        'unit',
+        'origin'
+    ];
 
-    // Relasi Many-to-One: Banyak Produk dimiliki oleh Satu Kategori
+    // Relationship: Product belongs to Category
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    // Custom Attribute: Formatted Price
+    public function getFormattedPriceAttribute()
+    {
+        return 'Rp ' . number_format($this->price, 0, ',', '.');
+    }
+
+    // Scope: Search by name or description
+    public function scopeSearch($query, $search)
+    {
+        return $query->where(function($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('description', 'like', "%{$search}%");
+        });
+    }
+
+    // Scope: Filter by price range
+    public function scopePriceRange($query, $min, $max)
+    {
+        if ($min) {
+            $query->where('price', '>=', $min);
+        }
+        if ($max) {
+            $query->where('price', '<=', $max);
+        }
+        return $query;
     }
 }

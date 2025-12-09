@@ -2,12 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\HomeController;
 
-Route::get('/', function () {
-    return redirect()->route('products');
-});
+// Home route
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Group routes untuk products dengan prefix dan controller
+// Product routes dengan group
 Route::controller(ProductController::class)->prefix('products')->group(function () {
     Route::get('/', 'index')->name('products');
     Route::get('/create', 'create')->name('products.create');
@@ -15,4 +15,5 @@ Route::controller(ProductController::class)->prefix('products')->group(function 
     Route::get('/show/{id}', 'show')->name('products.show');
     Route::get('/edit/{id}', 'edit')->name('products.edit');
     Route::post('/update/{id}', 'update')->name('products.update');
+    Route::delete('/delete/{id}', 'destroy')->name('products.destroy');
 });

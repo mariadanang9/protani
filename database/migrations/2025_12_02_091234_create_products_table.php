@@ -6,29 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-
-            // Foreign Key ke tabel categories
-            $table->foreignId('category_id')
-                ->constrained('categories') // Relasi ke tabel 'categories'
-                ->onDelete('cascade');     // Jika kategori dihapus, produk ikut terhapus
-
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->string('name');
+            $table->string('slug')->unique();
             $table->text('description');
-            $table->float('price'); // Menggunakan float untuk harga
+            $table->integer('price'); // Harga dalam rupiah
+            $table->integer('stock')->default(100);
+            $table->string('unit')->default('kg'); // satuan: kg, ikat, buah
+            $table->string('origin')->nullable(); // Asal daerah
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('products');
