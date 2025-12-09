@@ -39,13 +39,28 @@
             background-color: var(--primary);
             color: white;
         }
+
+        /* Fix Pagination Arrow Icon Size */
+        .pagination .page-link svg {
+            width: 6px !important;
+            height: 6px !important;
+            vertical-align: middle;
+        }
+
+        .pagination .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                🌾 Protani Indonesia
+                <img src="{{ asset('images/logo-protani.png') }}" alt="Protani Logo" height="40" class="me-2">
+                Protani Indonesia
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -79,7 +94,7 @@
 
     <footer class="mt-5 py-4 bg-light">
         <div class="container text-center">
-            <p class="mb-0 text-muted">© 2024 AgriProducts Indonesia - Sistem Manajemen Produk Pertanian</p>
+            <p class="mb-0 text-muted">© 2024 Protani Indonesia - Produk Pertanian</p>
         </div>
     </footer>
 

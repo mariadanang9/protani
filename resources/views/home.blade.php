@@ -5,10 +5,12 @@
     <div class="hero-section text-white text-center py-5 mb-5 rounded shadow-lg" style="background: linear-gradient(135deg, #2d5016 0%, #6b8e23 100%);">
         <div class="container">
             <div class="mb-4">
-                <span class="display-1">🌾</span>
+                <span class="display-1">
+                    <img src="{{ asset('images/logo-protani.png') }}" alt="Protani Logo" height="120" class="me-2">
+                </span>
             </div>
             <h1 class="display-3 fw-bold mb-3">Protani Indonesia</h1>
-            <p class="lead mb-4 fs-4">Sistem Manajemen Produk Pertanian Terpercaya</p>
+            <p class="lead mb-4 fs-4"> Produk Pertanian Terpercaya</p>
             <p class="mb-4 fs-5">Mendukung petani lokal, menghadirkan produk berkualitas untuk Indonesia</p>
             <div class="d-flex gap-3 justify-content-center flex-wrap">
                 <a href="{{ route('products') }}" class="btn btn-light btn-lg px-5 py-3">

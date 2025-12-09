@@ -2,7 +2,9 @@
     <x-slot:title>Daftar Produk Pertanian</x-slot:title>
 
     <div class="mb-4">
-        <h1 class="mb-1">🌾 Daftar Produk Pertanian</h1>
+        <h1 class="mb-1">
+            <img src="{{ asset('images/logo-protani.png') }}" alt="Protani Logo" height="120" class="me-2">
+            Daftar Produk Pertanian</h1>
         <p class="text-muted">Kelola produk hasil pertanian lokal Indonesia</p>
     </div>
 
