@@ -59,8 +59,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ route('home') }}">
-                <img src="{{ asset('images/logo-protani.png') }}" alt="Protani Logo" height="40" class="me-2">
-                Protani Indonesia
+                🌾 Protani Indonesia
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -73,9 +72,42 @@
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('products*') ? 'active' : '' }}" href="{{ route('products') }}">Produk</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('products.create') }}">Tambah Produk</a>
-                    </li>
+
+                    @auth
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('cart*') ? 'active' : '' }}" href="{{ route('cart.index') }}">
+                                🛒 Keranjang
+                                @if(auth()->user()->carts()->count() > 0)
+                                    <span class="badge bg-danger">{{ auth()->user()->carts()->count() }}</span>
+                                @endif
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('orders*') ? 'active' : '' }}" href="{{ route('orders.index') }}">
+                                📦 Pesanan
+                            </a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                👤 {{ Auth::user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">🚪 Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    @else
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('login') }}">🔐 Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-outline-light ms-2" href="{{ route('register') }}">Daftar</a>
+                        </li>
+                    @endauth
                 </ul>
             </div>
         </div>

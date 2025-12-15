@@ -73,6 +73,20 @@
                         <a href="{{ route('products') }}" class="btn btn-secondary">
                             ← Kembali ke Daftar
                         </a>
+                        @auth
+                            <!-- Add to Cart Button -->
+                            <button type="button"
+                                    class="btn btn-success"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addToCartModalDetail">
+                                🛒 Tambah ke Keranjang
+                            </button>
+                        @else
+                            <a href="{{ route('login') }}" class="btn btn-success">
+                                🔐 Login untuk Beli
+                            </a>
+                        @endauth
+
                         <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">
                             ✏️ Edit Produk
                         </a>
@@ -81,4 +95,47 @@
             </div>
         </div>
     </div>
+    <!-- Add to Cart Modal -->
+    @auth
+    <div class="modal fade" id="addToCartModalDetail" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">🛒 Tambah ke Keranjang</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="text-center mb-3">
+                            <div class="display-4 mb-2">{{ $product->category->icon }}</div>
+                            <h5 class="fw-bold">{{ $product->name }}</h5>
+                            <p class="text-success fw-bold mb-0">{{ $product->formatted_price }} / {{ $product->unit }}</p>
+                            <small class="text-muted">Stok: {{ $product->stock }} {{ $product->unit }}</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="quantityDetail" class="form-label">Jumlah:</label>
+                            <input type="number"
+                                   class="form-control form-control-lg text-center"
+                                   id="quantityDetail"
+                                   name="quantity"
+                                   value="1"
+                                   min="1"
+                                   max="{{ $product->stock }}"
+                                   required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-success">
+                            ✅ Tambah ke Keranjang
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endauth
+
 </x-layout>

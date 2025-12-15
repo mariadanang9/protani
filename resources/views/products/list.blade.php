@@ -105,6 +105,22 @@
                         </div>
                         <div class="d-flex gap-1">
                             <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-info flex-fill">Lihat</a>
+
+                            @auth
+                                <!-- Add to Cart Button -->
+                                <button type="button"
+                                        class="btn btn-sm btn-success flex-fill"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#addToCartModal{{ $product->id }}">
+                                    🛒 Beli
+                                </button>
+                            @else
+                                <a href="{{ route('login') }}"
+                                   class="btn btn-sm btn-success flex-fill">
+                                    🔐 Login untuk Beli
+                                </a>
+                            @endauth
+
                             <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-warning flex-fill">Edit</a>
                         </div>
                     </div>
@@ -118,6 +134,49 @@
                 </div>
             </div>
         @endforelse
+
+        <!-- Add to Cart Modals -->
+        @foreach($products as $product)
+            <div class="modal fade" id="addToCartModal{{ $product->id }}" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">🛒 Tambah ke Keranjang</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                            @csrf
+                            <div class="modal-body">
+                                <div class="text-center mb-3">
+                                    <div class="display-4 mb-2">{{ $product->category->icon }}</div>
+                                    <h5 class="fw-bold">{{ $product->name }}</h5>
+                                    <p class="text-success fw-bold mb-0">{{ $product->formatted_price }} / {{ $product->unit }}</p>
+                                    <small class="text-muted">Stok: {{ $product->stock }} {{ $product->unit }}</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="quantity{{ $product->id }}" class="form-label">Jumlah:</label>
+                                    <input type="number"
+                                        class="form-control form-control-lg text-center"
+                                        id="quantity{{ $product->id }}"
+                                        name="quantity"
+                                        value="1"
+                                        min="1"
+                                        max="{{ $product->stock }}"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success">
+                                    ✅ Tambah ke Keranjang
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endforeach
     </div>
 
     <!-- Pagination -->
