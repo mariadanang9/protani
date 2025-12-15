@@ -53,6 +53,31 @@
             justify-content: center;
             min-width: 20px;
         }
+
+        /* Cart Badge Animation */
+        .cart-badge {
+            animation: pulse 2s infinite;
+            font-size: 0.7rem;
+            padding: 0.25em 0.5em;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -74,11 +99,17 @@
                     </li>
 
                     @auth
-                        <li class="nav-item">
+                        <li class="nav-item position-relative">
                             <a class="nav-link {{ request()->routeIs('cart*') ? 'active' : '' }}" href="{{ route('cart.index') }}">
                                 🛒 Keranjang
-                                @if(auth()->user()->carts()->count() > 0)
-                                    <span class="badge bg-danger">{{ auth()->user()->carts()->count() }}</span>
+                                @php
+                                    $cartCount = auth()->user()->carts()->count();
+                                @endphp
+                                @if($cartCount > 0)
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge">
+                                        {{ $cartCount }}
+                                        <span class="visually-hidden">items in cart</span>
+                                    </span>
                                 @endif
                             </a>
                         </li>
@@ -114,12 +145,7 @@
     </nav>
 
     <div class="container mt-4">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Berhasil!</strong> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        @endif
+        <x-alert />
 
         {{ $slot }}
     </div>

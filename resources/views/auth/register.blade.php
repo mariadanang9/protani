@@ -131,4 +131,70 @@
             box-shadow: 0 5px 15px rgba(45, 80, 22, 0.3);
         }
     </style>
+
+    <script>
+        // Real-time validation feedback
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const password = document.getElementById('password');
+            const passwordConfirm = document.getElementById('password_confirmation');
+            const email = document.getElementById('email');
+
+            // Password strength indicator
+            password.addEventListener('input', function() {
+                const strength = checkPasswordStrength(this.value);
+                const feedback = document.getElementById('password-strength');
+
+                if (!feedback) {
+                    const div = document.createElement('div');
+                    div.id = 'password-strength';
+                    div.className = 'form-text';
+                    this.parentElement.appendChild(div);
+                }
+
+                document.getElementById('password-strength').innerHTML = strength.html;
+            });
+
+            // Password match indicator
+            passwordConfirm.addEventListener('input', function() {
+                if (this.value && password.value) {
+                    if (this.value === password.value) {
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    } else {
+                        this.classList.remove('is-valid');
+                        this.classList.add('is-invalid');
+                    }
+                }
+            });
+
+            // Email format check
+            email.addEventListener('blur', function() {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (this.value && !emailRegex.test(this.value)) {
+                    this.classList.add('is-invalid');
+                } else {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
+
+        function checkPasswordStrength(password) {
+            let strength = 0;
+            if (password.length >= 8) strength++;
+            if (password.match(/[a-z]+/)) strength++;
+            if (password.match(/[A-Z]+/)) strength++;
+            if (password.match(/[0-9]+/)) strength++;
+            if (password.match(/[$@#&!]+/)) strength++;
+
+            const colors = ['danger', 'danger', 'warning', 'info', 'success'];
+            const texts = ['Sangat Lemah', 'Lemah', 'Cukup', 'Kuat', 'Sangat Kuat'];
+
+            return {
+                html: `<span class="text-${colors[strength - 1] || 'muted'}">
+                    Kekuatan Password: ${texts[strength - 1] || 'Terlalu Pendek'}
+                </span>`
+            };
+        }
+    </script>
 </x-layout>

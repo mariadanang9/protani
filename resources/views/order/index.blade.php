@@ -1,6 +1,10 @@
 <x-layout>
     <x-slot:title>Riwayat Pesanan</x-slot:title>
 
+    <x-breadcrumb :items="[
+        ['label' => 'Pesanan Saya', 'url' => '#']
+    ]" />
+
     <div class="orders-header mb-4">
         <h1 class="fw-bold">📦 Riwayat Pesanan</h1>
         <p class="text-muted">Lihat semua pesanan yang pernah Anda buat</p>

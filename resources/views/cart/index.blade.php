@@ -1,6 +1,11 @@
 <x-layout>
     <x-slot:title>Keranjang Belanja</x-slot:title>
 
+    <x-breadcrumb :items="[
+        ['label' => 'Produk', 'url' => route('products')],
+        ['label' => 'Keranjang', 'url' => '#']
+    ]" />
+
     <div class="cart-header mb-4">
         <h1 class="fw-bold">🛒 Keranjang Belanja</h1>
         <p class="text-muted">Kelola produk yang ingin Anda beli</p>
@@ -98,17 +103,31 @@
 
                                     <!-- Remove Button -->
                                     <div class="col-md-1 text-end">
-                                        <form action="{{ route('cart.remove', $cart->id) }}" method="POST"
-                                              onsubmit="return confirm('Hapus {{ $cart->product->name }} dari keranjang?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bi bi-trash"></i> 🗑️
-                                            </button>
+                                        <form action="{{ route('cart.remove', $cart->id) }}" method="POST">
+                                            <!-- Remove Button -->
+                                            <div class="col-md-1 text-end">
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-danger delete-cart-btn"
+                                                        data-cart-id="{{ $cart->id }}"
+                                                        data-product-name="{{ $cart->product->name }}">
+                                                    🗑️
+                                                </button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
                             </div>
+                        @endforeach
+
+                        <!-- Hidden delete forms -->
+                        @foreach($carts as $cart)
+                            <form id="delete-form-{{ $cart->id }}"
+                                action="{{ route('cart.remove', $cart->id) }}"
+                                method="POST"
+                                style="display: none;">
+                                @csrf
+                                @method('DELETE')
+                            </form>
                         @endforeach
                     </div>
                 </div>
@@ -214,7 +233,7 @@
                 input.value = currentValue + 1;
                 input.form.submit();
             } else {
-                alert('Stok maksimal: ' + maxStock);
+                showToast('error', 'Stok maksimal: ' + maxStock);
             }
         }
 
@@ -226,5 +245,78 @@
                 input.form.submit();
             }
         }
+
+        // Delete confirmation with SweetAlert-like style
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.delete-cart-btn');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const cartId = this.dataset.cartId;
+                    const productName = this.dataset.productName;
+
+                    if (confirm(`Hapus ${productName} dari keranjang?`)) {
+                        document.getElementById('delete-form-' + cartId).submit();
+                    }
+                });
+            });
+        });
+
+        // Toast notification function
+        function showToast(type, message) {
+            const colors = {
+                'success': '#10b981',
+                'error': '#ef4444',
+                'info': '#3b82f6'
+            };
+
+            const toast = document.createElement('div');
+            toast.className = 'custom-toast';
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type] || colors.info};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                z-index: 9999;
+                animation: slideInRight 0.5s ease;
+            `;
+            toast.textContent = message;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
     </script>
+
+    <style>
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+        }
+    </style>
+
 </x-layout>

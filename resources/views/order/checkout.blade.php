@@ -1,6 +1,12 @@
 <x-layout>
     <x-slot:title>Checkout</x-slot:title>
 
+    <x-breadcrumb :items="[
+        ['label' => 'Produk', 'url' => route('products')],
+        ['label' => 'Keranjang', 'url' => route('cart.index')],
+        ['label' => 'Checkout', 'url' => '#']
+    ]" />
+
     <div class="checkout-header mb-4">
         <h1 class="fw-bold">💳 Checkout</h1>
         <p class="text-muted">Lengkapi informasi pengiriman dan pembayaran</p>
@@ -67,7 +73,7 @@
                     <h5 class="mb-0">📝 Informasi Pengiriman & Pembayaran</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm">
+                    <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm" data-loading="true">
                         @csrf
 
                         <!-- Shipping Address -->
@@ -258,4 +264,5 @@
             button.disabled = true;
         });
     </script>
+    <x-loading-overlay />
 </x-layout>

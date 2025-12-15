@@ -35,11 +35,11 @@ class User extends Authenticatable
     // Relationships
     public function carts()
     {
-        return $this->hasMany(Cart::class);
+        return $this->hasMany(\App\Models\Cart::class);
     }
 
     public function orders()
     {
-        return $this->hasMany(Order::class);
+        return $this->hasMany(\App\Models\Order::class);
     }
 }

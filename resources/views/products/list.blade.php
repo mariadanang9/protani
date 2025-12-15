@@ -151,6 +151,29 @@
                                     <div class="display-4 mb-2">{{ $product->category->icon }}</div>
                                     <h5 class="fw-bold">{{ $product->name }}</h5>
                                     <p class="text-success fw-bold mb-0">{{ $product->formatted_price }} / {{ $product->unit }}</p>
+                                    <div class="mb-3">
+                                        <span class="fs-5 fw-bold text-success">{{ $product->formatted_price }}</span>
+                                        <small class="text-muted">/ {{ $product->unit }}</small>
+
+                                        <!-- Stock Warning Badge -->
+                                        @if($product->stock <= 10)
+                                            <div class="mt-2">
+                                                <span class="badge bg-warning text-dark">
+                                                    ⚠️ Stok Terbatas: {{ $product->stock }} {{ $product->unit }}
+                                                </span>
+                                            </div>
+                                        @elseif($product->stock <= 0)
+                                            <div class="mt-2">
+                                                <span class="badge bg-danger">
+                                                    ❌ Stok Habis
+                                                </span>
+                                            </div>
+                                        @else
+                                            <div class="mt-2">
+                                                <small class="text-muted">Stok: {{ $product->stock }} {{ $product->unit }}</small>
+                                            </div>
+                                        @endif
+                                    </div>
                                     <small class="text-muted">Stok: {{ $product->stock }} {{ $product->unit }}</small>
                                 </div>
 

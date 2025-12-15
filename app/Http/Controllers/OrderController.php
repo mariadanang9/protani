@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\CheckoutRequest;
 
 class OrderController extends Controller
 {
@@ -23,10 +24,8 @@ class OrderController extends Controller
     // Show Order Detail
     public function show(Order $order)
     {
-        // Authorization: make sure user owns this order
-        if ($order->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
+        // Use Policy authorization
+        $this->authorize('view', $order);
 
         $order->load(['orderItems.product.category']);
 
@@ -51,14 +50,12 @@ class OrderController extends Controller
         return view('orders.checkout', compact('carts', 'total'));
     }
 
+    use App\Http\Requests\CheckoutRequest;
+
     // Process Checkout
-    public function store(Request $request)
+    public function store(CheckoutRequest $request)
     {
-        // Validate form
-        $validated = $request->validate([
-            'shipping_address' => 'required|string|min:10',
-            'payment_method' => 'required|in:transfer,cod,ewallet'
-        ]);
+        $validated = $request->validated();
 
         // Get user's cart
         $carts = Auth::user()->carts()->with('product')->get();
@@ -103,7 +100,7 @@ class OrderController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $cart->product_id,
                     'quantity' => $cart->quantity,
-                    'price' => $cart->product->price // Save current price for history
+                    'price' => $cart->product->price
                 ]);
 
                 // Update product stock
@@ -130,15 +127,8 @@ class OrderController extends Controller
     // Cancel Order (optional feature)
     public function cancel(Order $order)
     {
-        // Authorization
-        if ($order->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        // Only pending orders can be cancelled
-        if ($order->status !== 'pending') {
-            return back()->with('error', 'Pesanan ini tidak dapat dibatalkan.');
-        }
+        // Use Policy authorization
+        $this->authorize('cancel', $order);
 
         DB::beginTransaction();
 

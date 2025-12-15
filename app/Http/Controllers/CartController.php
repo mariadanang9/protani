@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Http\Requests\AddToCartRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,12 +24,12 @@ class CartController extends Controller
         return view('cart.index', compact('carts', 'total'));
     }
 
+    use App\Http\Requests\AddToCartRequest;
+
     // Add Product to Cart
-    public function add(Request $request, Product $product)
+    public function add(AddToCartRequest $request, Product $product)
     {
-        $validated = $request->validate([
-            'quantity' => 'required|integer|min:1|max:' . $product->stock
-        ]);
+        $validated = $request->validated();
 
         // Check if product already in cart
         $existingCart = Cart::where('user_id', Auth::id())

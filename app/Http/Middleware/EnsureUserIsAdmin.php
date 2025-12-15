@@ -10,11 +10,14 @@ class EnsureUserIsAdmin
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
+        // Check if user is admin (you can add 'is_admin' column to users table)
+        if (!auth()->check() || !auth()->user()->is_admin) {
+            abort(403, 'Unauthorized. Admin access required.');
+        }
+
         return $next($request);
     }
 }
