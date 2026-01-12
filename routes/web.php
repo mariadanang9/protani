@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 
 // Home route
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -53,6 +54,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    });
+
+    // ===== NEW: Review Routes =====
+    Route::controller(ReviewController::class)->prefix('reviews')->group(function () {
+        Route::post('/products/{product}', 'store')->name('reviews.store');
+        Route::put('/{review}', 'update')->name('reviews.update');
+        Route::delete('/{review}', 'destroy')->name('reviews.destroy');
     });
 });
 

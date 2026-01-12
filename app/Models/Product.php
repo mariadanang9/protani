@@ -26,6 +26,52 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    // ===== NEW: Relationship with Reviews =====
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    // ===== NEW: Get Average Rating =====
+    public function getAverageRatingAttribute()
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
+
+    // ===== NEW: Get Total Reviews =====
+    public function getTotalReviewsAttribute()
+    {
+        return $this->reviews()->count();
+    }
+
+    // ===== NEW: Get Rating Stars HTML =====
+    public function getRatingStarsAttribute()
+    {
+        $avg = $this->average_rating;
+        $fullStars = floor($avg);
+        $halfStar = ($avg - $fullStars) >= 0.5;
+        $emptyStars = 5 - $fullStars - ($halfStar ? 1 : 0);
+
+        $html = '';
+
+        // Full stars
+        for ($i = 0; $i < $fullStars; $i++) {
+            $html .= '<i class="fas fa-star text-warning"></i>';
+        }
+
+        // Half star
+        if ($halfStar) {
+            $html .= '<i class="fas fa-star-half-alt text-warning"></i>';
+        }
+
+        // Empty stars
+        for ($i = 0; $i < $emptyStars; $i++) {
+            $html .= '<i class="far fa-star text-warning"></i>';
+        }
+
+        return $html;
+    }
+
     // Custom Attribute: Formatted Price
     public function getFormattedPriceAttribute()
     {
