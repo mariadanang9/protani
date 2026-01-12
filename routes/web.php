@@ -8,9 +8,17 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController; // NEW
 use App\Http\Controllers\WishlistController; // NEW
+use App\Http\Controllers\PageController; // NEW
 
 // Home route
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Static Pages
+Route::controller(PageController::class)->group(function () {
+    Route::get('/faq', 'faq')->name('faq');
+    Route::get('/about', 'about')->name('about');
+    Route::get('/contact', 'contact')->name('contact');
+});
 
 // Auth routes
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');

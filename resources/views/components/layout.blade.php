@@ -510,19 +510,23 @@
                     <h5 class="footer-heading">Menu</h5>
                     <a href="{{ route('home') }}" class="footer-link">Beranda</a>
                     <a href="{{ route('products') }}" class="footer-link">Produk</a>
+                    <a href="{{ route('about') }}" class="footer-link">Tentang Kami</a>
+                    <a href="{{ route('faq') }}" class="footer-link">FAQ</a>
                     @auth
                         <a href="{{ route('cart.index') }}" class="footer-link">Keranjang</a>
                         <a href="{{ route('orders.index') }}" class="footer-link">Pesanan</a>
+                        <a href="{{ route('wishlist.index') }}" class="footer-link">Wishlist</a>
                     @endauth
                 </div>
 
                 <!-- Categories -->
                 <div class="col-md-3 mb-4">
-                    <h5 class="footer-heading">Kategori</h5>
-                    <a href="{{ route('products') }}?category=1" class="footer-link">Sayuran</a>
-                    <a href="{{ route('products') }}?category=2" class="footer-link">Buah-buahan</a>
-                    <a href="{{ route('products') }}?category=3" class="footer-link">Biji-bijian</a>
-                    <a href="{{ route('products') }}?category=4" class="footer-link">Rempah</a>
+                    <h5 class="footer-heading">Informasi</h5>
+                    <a href="{{ route('about') }}" class="footer-link">Tentang Protani</a>
+                    <a href="{{ route('faq') }}" class="footer-link">FAQ</a>
+                    <a href="{{ route('contact') }}" class="footer-link">Hubungi Kami</a>
+                    <a href="#" class="footer-link">Syarat & Ketentuan</a>
+                    <a href="#" class="footer-link">Kebijakan Privasi</a>
                 </div>
 
                 <!-- Contact -->
@@ -534,9 +538,12 @@
                     <p class="text-white-50 mb-2">
                         <i class="fas fa-phone me-2"></i> +62 812-3456-7890
                     </p>
-                    <p class="text-white-50 mb-0">
+                    <p class="text-white-50 mb-3">
                         <i class="fas fa-map-marker-alt me-2"></i> Jakarta, Indonesia
                     </p>
+                    <a href="{{ route('contact') }}" class="btn btn-sm" style="background: white; color: #2d5016; border-radius: 20px; padding: 0.5rem 1.5rem; font-weight: 600;">
+                        <i class="fas fa-paper-plane me-2"></i>Hubungi Kami
+                    </a>
                 </div>
             </div>
 
