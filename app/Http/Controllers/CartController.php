@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Http\Requests\AddToCartRequest;
+use App\Services\RecommendationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -22,7 +24,6 @@ class CartController extends Controller
 
         return view('cart.index', compact('carts', 'total'));
     }
-
 
     // Add Product to Cart
     public function add(AddToCartRequest $request, Product $product)
@@ -47,6 +48,9 @@ class CartController extends Controller
                 'quantity' => $newQuantity
             ]);
 
+            // Log activity
+            RecommendationService::logActivity($product->id, 'cart');
+
             return back()->with('success', '✅ Jumlah produk di keranjang berhasil diperbarui!');
         }
 
@@ -56,6 +60,9 @@ class CartController extends Controller
             'product_id' => $product->id,
             'quantity' => $validated['quantity']
         ]);
+
+        // Log activity
+        RecommendationService::logActivity($product->id, 'cart');
 
         return back()->with('success', '🛒 Produk berhasil ditambahkan ke keranjang!');
     }

@@ -890,6 +890,41 @@
         @endif
     </div>
 
+    <!-- ===== SIMILAR PRODUCTS SECTION ===== -->
+    @if($similarProducts->count() > 0)
+        <div class="reviews-section mt-4">
+            <h2 class="section-title">
+                <i class="fas fa-th-large me-2"></i> Produk Serupa
+            </h2>
+
+            <div class="row g-4">
+                @foreach($similarProducts as $similar)
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card product-card h-100" style="animation: fadeInUp 0.6s ease;">
+                            <div class="card-body position-relative">
+                                <span class="product-badge">{{ $similar->category->icon }}</span>
+
+                                <h5 class="product-title mt-3">{{ $similar->name }}</h5>
+                                <p class="text-muted small fw-semibold mb-2">
+                                    {{ $similar->category->name }}
+                                </p>
+
+                                <div class="mb-3">
+                                    <div class="product-price" style="font-size: 1.5rem;">{{ $similar->formatted_price }}</div>
+                                    <small class="text-muted">per {{ $similar->unit }}</small>
+                                </div>
+
+                                <a href="{{ route('products.show', $similar->id) }}" class="btn product-btn w-100">
+                                    <i class="fas fa-eye me-2"></i> Lihat Detail
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     <script>
         const maxStock = {{ $product->stock }};
 

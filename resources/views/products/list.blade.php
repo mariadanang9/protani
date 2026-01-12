@@ -1,231 +1,635 @@
 <x-layout>
-    <x-slot:title>Daftar Produk - Protani Indonesia</x-slot:title>
+    <x-slot:title>Produk - Protani Indonesia</x-slot:title>
 
-    <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h1 class="fw-bold">📦 Daftar Produk Pertanian</h1>
-                <p class="text-muted">Temukan berbagai produk pertanian berkualitas dari seluruh Indonesia</p>
+    <style>
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            background: linear-gradient(135deg, #2d5016, #4a7c2c);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+            box-shadow: 0 10px 30px rgba(45, 80, 22, 0.2);
+            animation: fadeInDown 0.6s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== FILTER SIDEBAR ===== */
+        .filter-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 90px;
+            animation: fadeInLeft 0.6s ease;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .filter-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #2d5016;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-input {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-input:focus {
+            border-color: #6b8e23;
+            box-shadow: 0 0 0 3px rgba(107, 142, 35, 0.1);
+        }
+
+        .category-option {
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid #e9ecef;
+        }
+
+        .category-option:hover {
+            background-color: #f8f9fa;
+            border-color: #6b8e23;
+            transform: translateX(5px);
+        }
+
+        .category-option.active {
+            background: linear-gradient(135deg, #2d5016, #6b8e23);
+            color: white;
+            border-color: #2d5016;
+        }
+
+        .filter-btn {
+            background: linear-gradient(135deg, #2d5016, #6b8e23);
+            color: white;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 80, 22, 0.3);
+        }
+
+        .reset-btn {
+            background: white;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+
+        .reset-btn:hover {
+            background: #f8f9fa;
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+
+        /* ===== PRODUCT GRID ===== */
+        .products-container {
+            animation: fadeInRight 0.6s ease;
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .sort-bar {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .products-count {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .sort-select {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .sort-select:focus {
+            border-color: #6b8e23;
+            box-shadow: 0 0 0 3px rgba(107, 142, 35, 0.1);
+        }
+
+        /* ===== PRODUCT CARDS ===== */
+        .product-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+            height: 100%;
+            animation: fadeInUp 0.6s ease;
+            animation-fill-mode: both;
+        }
+
+        .product-card:nth-child(1) { animation-delay: 0.1s; }
+        .product-card:nth-child(2) { animation-delay: 0.15s; }
+        .product-card:nth-child(3) { animation-delay: 0.2s; }
+        .product-card:nth-child(4) { animation-delay: 0.25s; }
+        .product-card:nth-child(5) { animation-delay: 0.3s; }
+        .product-card:nth-child(6) { animation-delay: 0.35s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 40px rgba(45, 80, 22, 0.2);
+            border-color: #6b8e23;
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .product-image-placeholder {
+            font-size: 5rem;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover .product-image-placeholder {
+            transform: scale(1.2) rotate(5deg);
+            opacity: 0.5;
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #2d5016, #6b8e23);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(45, 80, 22, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover .product-badge {
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .stock-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 0.4rem 0.8rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stock-badge.in-stock {
+            color: #28a745;
+        }
+
+        .stock-badge.low-stock {
+            color: #ffc107;
+        }
+
+        .stock-badge.out-of-stock {
+            color: #dc3545;
+        }
+
+        .product-body {
+            padding: 1.5rem;
+        }
+
+        .product-category {
+            color: #6b8e23;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #2d5016;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .product-card:hover .product-title {
+            color: #6b8e23;
+        }
+
+        .product-description {
+            color: #6c757d;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .product-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2d5016, #6b8e23);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .product-unit {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .product-origin {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-detail {
+            flex: 1;
+            background: linear-gradient(135deg, #2d5016, #6b8e23);
+            color: white;
+            border: none;
+            padding: 0.7rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-detail:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(45, 80, 22, 0.3);
+        }
+
+        /* ===== PAGINATION ===== */
+        .pagination {
+            margin-top: 2rem;
+            justify-content: center;
+        }
+
+        .page-link {
+            border: 2px solid #e9ecef;
+            color: #2d5016;
+            padding: 0.6rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .page-link:hover {
+            background: linear-gradient(135deg, #2d5016, #6b8e23);
+            color: white;
+            border-color: #2d5016;
+            transform: translateY(-2px);
+        }
+
+        .page-item.active .page-link {
+            background: linear-gradient(135deg, #2d5016, #6b8e23);
+            border-color: #2d5016;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 16px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .empty-icon {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 991px) {
+            .filter-card {
+                position: static;
+                margin-bottom: 2rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sort-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .sort-select {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <!-- ===== PAGE HEADER ===== -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="fas fa-shopping-bag me-2"></i> Semua Produk
+        </h1>
+        <p class="mb-0 fs-5">Temukan produk pertanian berkualitas dari petani lokal Indonesia</p>
+    </div>
+
+    <!-- ===== RECOMMENDATIONS BANNER ===== -->
+    @if($recommendations->count() > 0)
+        <div class="alert alert-success mb-4" style="border-radius: 16px; border: none; background: linear-gradient(135deg, #d4edda, #c3e6cb); animation: fadeInDown 0.6s ease;">
+            <h5 class="alert-heading fw-bold mb-3">
+                Rekomendasi untuk Anda
+            </h5>
+            <div class="row g-3">
+                @foreach($recommendations->take(3) as $rec)
+                    <div class="col-md-4">
+                        <div class="card h-100" style="border-radius: 12px; border: 2px solid #6b8e23; background: white;">
+                            <div class="card-body p-3">
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div style="font-size: 2rem;">{{ $rec->category->icon }}</div>
+                                    <div class="flex-fill">
+                                        <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">{{ Str::limit($rec->name, 30) }}</h6>
+                                        <small class="text-muted">{{ $rec->category->name }}</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-success">{{ $rec->formatted_price }}</span>
+                                    <a href="{{ route('products.show', $rec->id) }}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         </div>
+    @endif
 
-        <!-- Search & Filter Form -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
+    <div class="row">
+        <!-- ===== FILTER SIDEBAR ===== -->
+        <div class="col-lg-3">
+            <div class="filter-card">
+                <h5 class="filter-title">
+                    <i class="fas fa-filter"></i> Filter Produk
+                </h5>
+
                 <form action="{{ route('products') }}" method="GET">
-                    <div class="row g-3">
-                        <!-- Search -->
-                        <div class="col-md-4">
-                            <label class="form-label">🔍 Cari Produk</label>
-                            <input type="text" name="search" class="form-control"
-                                   placeholder="Nama atau deskripsi produk..."
-                                   value="{{ request('search') }}">
-                        </div>
+                    <!-- Search -->
+                    <div class="filter-section">
+                        <label class="filter-label">
+                            <i class="fas fa-search"></i> Cari Produk
+                        </label>
+                        <input type="text" name="search" class="form-control filter-input"
+                               placeholder="Nama produk..." value="{{ request('search') }}">
+                    </div>
 
-                        <!-- Category Filter -->
-                        <div class="col-md-3">
-                            <label class="form-label">📂 Kategori</label>
-                            <select name="category" class="form-select">
-                                <option value="">Semua Kategori</option>
-                                @foreach($categories as $category)
-                                    <option value="{{ $category->id }}"
-                                            {{ request('category') == $category->id ? 'selected' : '' }}>
-                                        {{ $category->icon }} {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                    <!-- Category -->
+                    <div class="filter-section">
+                        <label class="filter-label">
+                            <i class="fas fa-th-large"></i> Kategori
+                        </label>
+                        <div class="category-option {{ !request('category') ? 'active' : '' }}">
+                            <input type="radio" name="category" value="" id="cat-all"
+                                   {{ !request('category') ? 'checked' : '' }} class="d-none">
+                            <label for="cat-all" class="w-100 mb-0 cursor-pointer">
+                                Semua Kategori
+                            </label>
                         </div>
+                        @foreach($categories as $cat)
+                            <div class="category-option {{ request('category') == $cat->id ? 'active' : '' }}">
+                                <input type="radio" name="category" value="{{ $cat->id }}"
+                                       id="cat-{{ $cat->id }}"
+                                       {{ request('category') == $cat->id ? 'checked' : '' }}
+                                       class="d-none">
+                                <label for="cat-{{ $cat->id }}" class="w-100 mb-0 cursor-pointer">
+                                    {{ $cat->icon }} {{ $cat->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
 
-                        <!-- Price Range -->
-                        <div class="col-md-2">
-                            <label class="form-label">💰 Harga Min</label>
-                            <input type="number" name="min_price" class="form-control"
-                                   placeholder="0" value="{{ request('min_price') }}">
-                        </div>
-
-                        <div class="col-md-2">
-                            <label class="form-label">💰 Harga Max</label>
-                            <input type="number" name="max_price" class="form-control"
-                                   placeholder="1000000" value="{{ request('max_price') }}">
-                        </div>
-
-                        <!-- Submit Button -->
-                        <div class="col-md-1 d-flex align-items-end">
-                            <button type="submit" class="btn btn-success w-100">
-                                Filter
-                            </button>
+                    <!-- Price Range -->
+                    <div class="filter-section">
+                        <label class="filter-label">
+                            <i class="fas fa-tag"></i> Rentang Harga
+                        </label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" name="min_price" class="form-control filter-input"
+                                       placeholder="Min" value="{{ request('min_price') }}">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="max_price" class="form-control filter-input"
+                                       placeholder="Max" value="{{ request('max_price') }}">
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Sort Options -->
-                    <div class="row mt-3">
-                        <div class="col-md-3">
-                            <label class="form-label">📊 Urutkan</label>
-                            <select name="sort_by" class="form-select">
-                                <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Nama</option>
-                                <option value="price" {{ request('sort_by') == 'price' ? 'selected' : '' }}>Harga</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">🔄 Urutan</label>
-                            <select name="sort_order" class="form-select">
-                                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>A-Z / Rendah-Tinggi</option>
-                                <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : '' }}>Z-A / Tinggi-Rendah</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <a href="{{ route('products') }}" class="btn btn-outline-secondary w-100">
-                                Reset Filter
-                            </a>
-                        </div>
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn filter-btn">
+                            <i class="fas fa-check me-2"></i> Terapkan Filter
+                        </button>
+                        <a href="{{ route('products') }}" class="btn reset-btn">
+                            <i class="fas fa-redo me-2"></i> Reset Filter
+                        </a>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Results Info -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <p class="text-muted mb-0">
-                    Menampilkan {{ $products->count() }} dari {{ $products->total() }} produk
-                </p>
-            </div>
-            @auth
-                <a href="{{ route('products.create') }}" class="btn btn-success">
-                    ➕ Tambah Produk Baru
-                </a>
-            @endauth
-        </div>
-
-        <!-- Products Grid -->
-        @if($products->count() > 0)
-            <div class="row g-4 mb-4">
-                @foreach($products as $product)
-                    <div class="col-md-4">
-                        <div class="card shadow-sm h-100 border-0 hover-scale">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                    <h5 class="card-title fw-bold mb-0">{{ $product->name }}</h5>
-                                    <span class="badge bg-success fs-6">{{ $product->category->icon }}</span>
-                                </div>
-
-                                <p class="text-muted small mb-2">
-                                    <strong>{{ $product->category->name }}</strong>
-                                </p>
-
-                                <p class="card-text text-muted mb-3">
-                                    {{ Str::limit($product->description, 100) }}
-                                </p>
-
-                                <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <span class="fs-4 fw-bold text-success">{{ $product->formatted_price }}</span>
-                                            <small class="text-muted d-block">per {{ $product->unit }}</small>
-                                        </div>
-                                        @if($product->stock > 0)
-                                            <span class="badge bg-success">
-                                                Stok: {{ $product->stock }} {{ $product->unit }}
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger">Habis</span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                                @if($product->origin)
-                                    <p class="text-muted small mb-3">
-                                        📍 {{ $product->origin }}
-                                    </p>
-                                @endif
-
-                                <div class="d-flex gap-2">
-                                    <a href="{{ route('products.show', $product->id) }}"
-                                       class="btn btn-success flex-fill">
-                                        Lihat Detail
-                                    </a>
-                                    @auth
-                                        @if($product->stock > 0)
-                                            <button type="button"
-                                                    class="btn btn-outline-success"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#addToCartModal{{ $product->id }}">
-                                                🛒
-                                            </button>
-                                        @endif
-                                    @endauth
-                                </div>
-                            </div>
-                        </div>
+        <!-- ===== PRODUCTS GRID ===== -->
+        <div class="col-lg-9">
+            <div class="products-container">
+                <!-- Sort Bar -->
+                <div class="sort-bar">
+                    <div class="products-count">
+                        <i class="fas fa-box me-2"></i>
+                        <strong>{{ $products->total() }}</strong> produk ditemukan
                     </div>
+                    <form action="{{ route('products') }}" method="GET" class="d-flex gap-2 align-items-center">
+                        <!-- Preserve filters -->
+                        <input type="hidden" name="search" value="{{ request('search') }}">
+                        <input type="hidden" name="category" value="{{ request('category') }}">
+                        <input type="hidden" name="min_price" value="{{ request('min_price') }}">
+                        <input type="hidden" name="max_price" value="{{ request('max_price') }}">
 
-                    <!-- Add to Cart Modal -->
-                    @auth
-                    <div class="modal fade" id="addToCartModal{{ $product->id }}" tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Tambah ke Keranjang</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <form action="{{ route('cart.add', $product) }}" method="POST">
-                                    @csrf
-                                    <div class="modal-body">
-                                        <h6 class="fw-bold">{{ $product->name }}</h6>
-                                        <p class="text-muted">{{ $product->formatted_price }} / {{ $product->unit }}</p>
-                                        <p class="text-muted small">Stok tersedia: {{ $product->stock }} {{ $product->unit }}</p>
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Jumlah</label>
-                                            <input type="number"
-                                                   name="quantity"
-                                                   class="form-control"
-                                                   min="1"
-                                                   max="{{ $product->stock }}"
-                                                   value="1"
-                                                   required>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                        <button type="submit" class="btn btn-success">Tambah ke Keranjang</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    @endauth
-                @endforeach
-            </div>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center">
-                {{ $products->links() }}
-            </div>
-        @else
-            <!-- Empty State -->
-            <div class="card shadow-sm">
-                <div class="card-body text-center py-5">
-                    <div class="display-1 mb-3">📭</div>
-                    <h4 class="fw-bold mb-3">Produk Tidak Ditemukan</h4>
-                    <p class="text-muted mb-4">
-                        Maaf, tidak ada produk yang sesuai dengan kriteria pencarian Anda.
-                    </p>
-                    <a href="{{ route('products') }}" class="btn btn-success">
-                        Lihat Semua Produk
-                    </a>
+                        <label class="mb-0 text-muted">Urutkan:</label>
+                        <select name="sort_by" class="form-select sort-select" onchange="this.form.submit()">
+                            <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Nama A-Z</option>
+                            <option value="price" {{ request('sort_by') == 'price' ? 'selected' : '' }}>Harga Termurah</option>
+                        </select>
+                    </form>
                 </div>
+
+                <!-- Products Grid -->
+                @if($products->count() > 0)
+                    <div class="row g-4">
+                        @foreach($products as $product)
+                            <div class="col-lg-4 col-md-6">
+                                <div class="card product-card">
+                                    <div class="product-image-wrapper">
+                                        <div class="product-image-placeholder">
+                                            {{ $product->category->icon }}
+                                        </div>
+                                        <span class="product-badge">{{ $product->category->icon }}</span>
+                                        <span class="stock-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
+                                            <i class="fas fa-box me-1"></i>
+                                            {{ $product->stock > 0 ? 'Stok: ' . $product->stock : 'Habis' }}
+                                        </span>
+                                    </div>
+                                    <div class="product-body">
+                                        <div class="product-category">{{ $product->category->name }}</div>
+                                        <h5 class="product-title">{{ $product->name }}</h5>
+                                        <p class="product-description">{{ Str::limit($product->description, 70) }}</p>
+
+                                        <div class="product-info">
+                                            <div>
+                                                <div class="product-price">{{ $product->formatted_price }}</div>
+                                                <div class="product-unit">per {{ $product->unit }}</div>
+                                            </div>
+                                            @if($product->origin)
+                                                <div class="product-origin">
+                                                    <i class="fas fa-map-marker-alt"></i> {{ $product->origin }}
+                                                </div>
+                                            @endif
+                                        </div>
+
+                                        <div class="product-actions">
+                                            <a href="{{ route('products.show', $product->id) }}" class="btn btn-detail">
+                                                <i class="fas fa-eye me-2"></i> Lihat Detail
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="d-flex justify-content-center mt-4">
+                        {{ $products->links() }}
+                    </div>
+                @else
+                    <!-- Empty State -->
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <h3 class="text-muted mb-3">Produk Tidak Ditemukan</h3>
+                        <p class="text-muted mb-4">Coba ubah filter atau kata kunci pencarian Anda</p>
+                        <a href="{{ route('products') }}" class="btn btn-success btn-lg">
+                            <i class="fas fa-redo me-2"></i> Reset Pencarian
+                        </a>
+                    </div>
+                @endif
             </div>
-        @endif
+        </div>
     </div>
 
-    <style>
-        .hover-scale {
-            transition: all 0.3s ease;
-        }
-        .hover-scale:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
-        }
-    </style>
 </x-layout>

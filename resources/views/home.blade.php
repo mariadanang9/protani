@@ -536,13 +536,56 @@
         </div>
     </div>
 
+    <!-- ===== RECOMMENDED PRODUCTS SECTION ===== -->
+    @if($recommendedProducts->count() > 0)
+    <div class="mb-5">
+        <div class="section-header">
+            <h2 class="section-title"> Rekomendasi untuk Anda</h2>
+            <p class="text-muted">Produk pilihan berdasarkan preferensi Anda</p>
+        </div>
+
+        <div class="row g-4">
+            @foreach($recommendedProducts as $product)
+                <div class="col-md-4 col-sm-6">
+                    <div class="card product-card h-100">
+                        <div class="card-body position-relative">
+                            <span class="product-badge">{{ $product->category->icon }}</span>
+
+                            <h5 class="product-title mt-3">{{ $product->name }}</h5>
+                            <p class="text-muted small fw-semibold mb-2">
+                                {{ $product->category->name }}
+                            </p>
+                            <p class="text-muted mb-3">
+                                {{ Str::limit($product->description, 80) }}
+                            </p>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <div class="product-price">{{ $product->formatted_price }}</div>
+                                    <small class="text-muted">per {{ $product->unit }}</small>
+                                </div>
+                                @if($product->origin)
+                                    <small class="text-muted">
+                                        <i class="fas fa-map-marker-alt"></i> {{ $product->origin }}
+                                    </small>
+                                @endif
+                            </div>
+
+                            <a href="{{ route('products.show', $product->id) }}" class="btn product-btn w-100">
+                                <i class="fas fa-eye me-2"></i> Lihat Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <!-- ===== FEATURED PRODUCTS SECTION ===== -->
     <div class="mb-5">
         <div class="section-header">
-            <h2 class="section-title">⭐ Produk Pilihan</h2>
-            <a href="{{ route('products') }}" class="btn btn-success btn-lg mt-3">
-                Lihat Semua Produk <i class="fas fa-arrow-right ms-2"></i>
-            </a>
+            <h2 class="section-title">⭐ Produk Pilihan </h2>
         </div>
 
         <div class="row g-4">

@@ -5,10 +5,18 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
+use App\Services\RecommendationService;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    protected $recommendationService;
+
+    public function __construct(RecommendationService $recommendationService)
+    {
+        $this->recommendationService = $recommendationService;
+    }
+
     public function index(Request $request)
     {
         $query = Product::with('category');
@@ -39,7 +47,10 @@ class ProductController extends Controller
         $products = $query->paginate(12)->withQueryString();
         $categories = Category::all();
 
-        return view('products.list', compact('products', 'categories'));
+        // Get personalized recommendations
+        $recommendations = $this->recommendationService->getRecommendations(6);
+
+        return view('products.list', compact('products', 'categories', 'recommendations'));
     }
 
     public function create()
@@ -69,8 +80,15 @@ class ProductController extends Controller
 
     public function show($id)
     {
-        $product = Product::with('category')->findOrFail($id);
-        return view('products.show', compact('product'));
+        $product = Product::with(['category', 'reviews.user'])->findOrFail($id);
+
+        // Log view activity
+        RecommendationService::logActivity($product->id, 'view');
+
+        // Get similar products
+        $similarProducts = $this->recommendationService->getSimilarProducts($product, 4);
+
+        return view('products.show', compact('product', 'similarProducts'));
     }
 
     public function edit($id)
