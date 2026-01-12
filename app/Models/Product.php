@@ -32,6 +32,21 @@ class Product extends Model
         return $this->hasMany(Review::class);
     }
 
+    // ===== NEW: Relationship with Wishlists =====
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    // ===== NEW: Check if product is in user's wishlist =====
+    public function isInWishlist($userId = null)
+    {
+        $userId = $userId ?? auth()->id();
+        if (!$userId) return false;
+
+        return $this->wishlists()->where('user_id', $userId)->exists();
+    }
+
     // ===== NEW: Get Average Rating =====
     public function getAverageRatingAttribute()
     {

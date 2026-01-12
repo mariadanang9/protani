@@ -304,6 +304,44 @@
             transition: all 0.4s ease;
             animation: fadeInUp 0.8s ease;
             animation-fill-mode: both;
+            position: relative;
+        }
+
+        .wishlist-btn-home {
+            position: absolute;
+            top: 15px;
+            right: 60px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 2px solid rgba(255,255,255,0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .wishlist-btn-home:hover {
+            transform: scale(1.1);
+            border-color: #e91e63;
+        }
+
+        .wishlist-btn-home i {
+            font-size: 1.2rem;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .wishlist-btn-home.in-wishlist i {
+            color: #e91e63;
+        }
+
+        .wishlist-btn-home:hover i {
+            color: #e91e63;
         }
 
         .product-card:nth-child(1) { animation-delay: 0.1s; }
@@ -540,7 +578,7 @@
     @if($recommendedProducts->count() > 0)
     <div class="mb-5">
         <div class="section-header">
-            <h2 class="section-title"> Rekomendasi untuk Anda</h2>
+            <h2 class="section-title">🤖 Rekomendasi untuk Anda</h2>
             <p class="text-muted">Produk pilihan berdasarkan preferensi Anda</p>
         </div>
 
@@ -548,6 +586,15 @@
             @foreach($recommendedProducts as $product)
                 <div class="col-md-4 col-sm-6">
                     <div class="card product-card h-100">
+                        @auth
+                            <form action="{{ route('wishlist.add', $product->id) }}" method="POST" class="wishlist-btn-home {{ $product->isInWishlist() ? 'in-wishlist' : '' }}">
+                                @csrf
+                                <button type="submit" style="background: none; border: none; cursor: pointer; padding: 0; width: 100%; height: 100%;">
+                                    <i class="{{ $product->isInWishlist() ? 'fas' : 'far' }} fa-heart"></i>
+                                </button>
+                            </form>
+                        @endauth
+
                         <div class="card-body position-relative">
                             <span class="product-badge">{{ $product->category->icon }}</span>
 
@@ -585,7 +632,10 @@
     <!-- ===== FEATURED PRODUCTS SECTION ===== -->
     <div class="mb-5">
         <div class="section-header">
-            <h2 class="section-title">⭐ Produk Pilihan </h2>
+            <h2 class="section-title">⭐ Produk Pilihan</h2>
+            <a href="{{ route('products') }}" class="btn btn-success btn-lg mt-3">
+                Lihat Semua Produk <i class="fas fa-arrow-right ms-2"></i>
+            </a>
         </div>
 
         <div class="row g-4">

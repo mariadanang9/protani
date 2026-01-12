@@ -699,6 +699,15 @@
 
                     <!-- Add to Cart Form -->
                     @auth
+                        <!-- Wishlist Button -->
+                        <form action="{{ route('wishlist.add', $product->id) }}" method="POST" class="mb-3">
+                            @csrf
+                            <button type="submit" class="btn w-100" style="background: white; color: #e91e63; border: 2px solid #e91e63; padding: 0.75rem; border-radius: 12px; font-weight: 600; transition: all 0.3s ease;">
+                                <i class="{{ $product->isInWishlist() ? 'fas' : 'far' }} fa-heart me-2"></i>
+                                {{ $product->isInWishlist() ? 'Hapus dari Wishlist' : 'Tambah ke Wishlist' }}
+                            </button>
+                        </form>
+
                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="cart-form-section">
                             @csrf
                             <div class="quantity-selector">

@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -43,8 +43,15 @@ class User extends Authenticatable
         return $this->hasMany(\App\Models\Order::class);
     }
 
+    //===== NEW: Reviews Relationship =====
     public function reviews()
     {
         return $this->hasMany(\App\Models\Review::class);
+    }
+
+    // ===== NEW: Wishlist Relationship =====
+    public function wishlists()
+    {
+        return $this->hasMany(\App\Models\Wishlist::class);
     }
 }

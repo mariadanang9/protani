@@ -236,6 +236,42 @@
             overflow: hidden;
         }
 
+        .wishlist-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .wishlist-btn:hover {
+            transform: scale(1.1);
+            border-color: #e91e63;
+        }
+
+        .wishlist-btn i {
+            font-size: 1.2rem;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .wishlist-btn.in-wishlist i {
+            color: #e91e63;
+        }
+
+        .wishlist-btn:hover i {
+            color: #e91e63;
+        }
+
         .product-image-placeholder {
             font-size: 5rem;
             opacity: 0.3;
@@ -444,7 +480,7 @@
     @if($recommendations->count() > 0)
         <div class="alert alert-success mb-4" style="border-radius: 16px; border: none; background: linear-gradient(135deg, #d4edda, #c3e6cb); animation: fadeInDown 0.6s ease;">
             <h5 class="alert-heading fw-bold mb-3">
-                Rekomendasi untuk Anda
+                <i class="fas fa-robot me-2"></i> 🤖 Rekomendasi untuk Anda
             </h5>
             <div class="row g-3">
                 @foreach($recommendations->take(3) as $rec)
@@ -579,6 +615,16 @@
                                         <div class="product-image-placeholder">
                                             {{ $product->category->icon }}
                                         </div>
+
+                                        @auth
+                                            <form action="{{ route('wishlist.add', $product->id) }}" method="POST" class="wishlist-btn {{ $product->isInWishlist() ? 'in-wishlist' : '' }}">
+                                                @csrf
+                                                <button type="submit" style="background: none; border: none; cursor: pointer;">
+                                                    <i class="{{ $product->isInWishlist() ? 'fas' : 'far' }} fa-heart"></i>
+                                                </button>
+                                            </form>
+                                        @endauth
+
                                         <span class="product-badge">{{ $product->category->icon }}</span>
                                         <span class="stock-badge {{ $product->stock > 10 ? 'in-stock' : ($product->stock > 0 ? 'low-stock' : 'out-of-stock') }}">
                                             <i class="fas fa-box me-1"></i>

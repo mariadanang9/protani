@@ -394,6 +394,16 @@
                     </li>
 
                     @auth
+                        <!-- Wishlist -->
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('wishlist.*') ? 'active' : '' }}" href="{{ route('wishlist.index') }}">
+                                <i class="fas fa-heart me-1"></i> Wishlist
+                                @if(Auth::user()->wishlists->count() > 0)
+                                    <span class="cart-badge" style="background-color: #e91e63;">{{ Auth::user()->wishlists->count() }}</span>
+                                @endif
+                            </a>
+                        </li>
+
                         <!-- Cart -->
                         <li class="nav-item">
                             <a class="nav-link cart-link {{ request()->routeIs('cart.*') ? 'active' : '' }}" href="{{ route('cart.index') }}">

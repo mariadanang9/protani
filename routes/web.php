@@ -6,7 +6,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ReviewController; // NEW
+use App\Http\Controllers\WishlistController; // NEW
 
 // Home route
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -24,7 +25,7 @@ Route::controller(ProductController::class)->prefix('products')->group(function 
     Route::get('/show/{id}', 'show')->name('products.show');
 });
 
-// Product management routes (protected - nanti bisa ditambah admin middleware)
+// Product management routes (protected)
 Route::middleware('auth')->group(function () {
     Route::controller(ProductController::class)->prefix('products')->group(function () {
         Route::get('/create', 'create')->name('products.create');
@@ -47,13 +48,12 @@ Route::middleware('auth')->group(function () {
     });
 
     // Order routes
-    Route::middleware('auth')->group(function () {
-    Route::get('/checkout', [OrderController::class, 'create'])->name('checkout.create');
-    Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
-
-    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::controller(OrderController::class)->group(function () {
+        Route::get('/orders', 'index')->name('orders.index');
+        Route::get('/orders/{order}', 'show')->name('orders.show');
+        Route::get('/checkout', 'create')->name('checkout.create');
+        Route::post('/checkout', 'store')->name('checkout.store');
+        Route::post('/orders/{order}/cancel', 'cancel')->name('orders.cancel');
     });
 
     // ===== NEW: Review Routes =====
@@ -62,15 +62,13 @@ Route::middleware('auth')->group(function () {
         Route::put('/{review}', 'update')->name('reviews.update');
         Route::delete('/{review}', 'destroy')->name('reviews.destroy');
     });
-});
 
-// Product routes dengan group
-//Route::controller(ProductController::class)->prefix('products')->group(function () {
-    //Route::get('/', 'index')->name('products');
-    //Route::get('/create', 'create')->name('products.create');
-    //Route::post('/store', 'store')->name('products.store');
-    //Route::get('/show/{id}', 'show')->name('products.show');
-    //Route::get('/edit/{id}', 'edit')->name('products.edit');
-    //Route::post('/update/{id}', 'update')->name('products.update');
-    //Route::delete('/delete/{id}', 'destroy')->name('products.destroy');
-//});
+    // ===== NEW: Wishlist Routes =====
+    Route::controller(WishlistController::class)->prefix('wishlist')->group(function () {
+        Route::get('/', 'index')->name('wishlist.index');
+        Route::post('/add/{product}', 'add')->name('wishlist.add');
+        Route::delete('/remove/{wishlist}', 'remove')->name('wishlist.remove');
+        Route::post('/toggle/{product}', 'toggle')->name('wishlist.toggle');
+        Route::delete('/clear', 'clear')->name('wishlist.clear');
+    });
+});
