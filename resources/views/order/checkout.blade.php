@@ -73,7 +73,7 @@
                     <h5 class="mb-0">📝 Informasi Pengiriman & Pembayaran</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm" data-loading="true">
+                    <form action="{{ route('checkout.store') }}" method="POST" id="checkoutForm">
                         @csrf
 
                         <!-- Shipping Address -->
@@ -185,12 +185,8 @@
                             <a href="{{ route('cart.index') }}" class="btn btn-outline-secondary btn-lg flex-fill">
                                 ← Kembali ke Keranjang
                             </a>
-                            <button type="submit" class="btn btn-success btn-lg flex-fill order-button">
-                                <span class="button-text">💳 Buat Pesanan</span>
-                                <span class="button-loading d-none">
-                                    <span class="spinner-border spinner-border-sm me-2"></span>
-                                    Memproses...
-                                </span>
+                            <button type="submit" class="btn btn-success btn-lg flex-fill">
+                                💳 Buat Pesanan
                             </button>
                         </div>
                     </form>
@@ -226,20 +222,6 @@
             font-size: 2rem;
         }
 
-        .order-button {
-            transition: all 0.3s ease;
-        }
-
-        .order-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(45, 80, 22, 0.3);
-        }
-
-        .order-button:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -251,18 +233,4 @@
             }
         }
     </style>
-
-    <script>
-        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
-            const button = document.querySelector('.order-button');
-            const buttonText = button.querySelector('.button-text');
-            const buttonLoading = button.querySelector('.button-loading');
-
-            // Show loading state
-            buttonText.classList.add('d-none');
-            buttonLoading.classList.remove('d-none');
-            button.disabled = true;
-        });
-    </script>
-    <x-loading-overlay />
 </x-layout>

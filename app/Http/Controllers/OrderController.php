@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,18 +19,20 @@ class OrderController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('orders.index', compact('orders'));
+        return view('order.index', compact('orders'));
     }
 
     // Show Order Detail
     public function show(Order $order)
     {
         // Use Policy authorization
-        $this->authorize('view', $order);
+        if ($order->user_id !== Auth::id()) {
+        abort(403, 'Unauthorized action.');
+}
 
         $order->load(['orderItems.product.category']);
 
-        return view('orders.show', compact('order'));
+        return view('order.show', compact('order'));
     }
 
     // Show Checkout Page
@@ -39,7 +42,7 @@ class OrderController extends Controller
 
         // Redirect if cart is empty
         if ($carts->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'Keranjang belanja Anda kosong!');
+            return redirect()->route('cart.index')->with('Keranjang belanja Anda kosong!');
         }
 
         // Calculate total
@@ -47,10 +50,8 @@ class OrderController extends Controller
             return $cart->subtotal;
         });
 
-        return view('orders.checkout', compact('carts', 'total'));
+        return view('order.checkout', compact('carts', 'total'));
     }
-
-    use App\Http\Requests\CheckoutRequest;
 
     // Process Checkout
     public function store(CheckoutRequest $request)
@@ -113,7 +114,7 @@ class OrderController extends Controller
             // Commit transaction
             DB::commit();
 
-            return redirect()->route('orders.show', $order->id)
+            return redirect()->route('order.show', $order->id)
                 ->with('success', '🎉 Pesanan berhasil dibuat! Terima kasih telah berbelanja di Protani.');
 
         } catch (\Exception $e) {
@@ -128,7 +129,11 @@ class OrderController extends Controller
     public function cancel(Order $order)
     {
         // Use Policy authorization
-        $this->authorize('cancel', $order);
+
+        // Manual authorization check
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized action.');
+        }
 
         DB::beginTransaction();
 

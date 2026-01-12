@@ -31,4 +31,5 @@ class Cart extends Model
     {
         return $this->quantity * $this->product->price;
     }
+
 }

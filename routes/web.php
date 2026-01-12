@@ -46,12 +46,13 @@ Route::middleware('auth')->group(function () {
     });
 
     // Order routes
-    Route::controller(OrderController::class)->group(function () {
-        Route::get('/orders', 'index')->name('orders.index');
-        Route::get('/orders/{order}', 'show')->name('orders.show');
-        Route::get('/checkout', 'create')->name('checkout.create');
-        Route::post('/checkout', 'store')->name('checkout.store');
-        Route::post('/orders/{order}/cancel', 'cancel')->name('orders.cancel');
+    Route::middleware('auth')->group(function () {
+    Route::get('/checkout', [OrderController::class, 'create'])->name('checkout.create');
+    Route::post('/checkout', [OrderController::class, 'store'])->name('checkout.store');
+
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     });
 });
 

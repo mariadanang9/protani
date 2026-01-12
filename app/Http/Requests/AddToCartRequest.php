@@ -8,7 +8,8 @@ class AddToCartRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return auth()->check();
+        // Return true karena sudah dilindungi middleware auth
+        return true;
     }
 
     public function rules(): array
@@ -20,7 +21,7 @@ class AddToCartRequest extends FormRequest
                 'required',
                 'integer',
                 'min:1',
-                'max:' . $product->stock
+                'max:' . ($product ? $product->stock : 999)
             ],
         ];
     }
@@ -31,7 +32,7 @@ class AddToCartRequest extends FormRequest
             'quantity.required' => 'Jumlah produk wajib diisi.',
             'quantity.integer' => 'Jumlah harus berupa angka.',
             'quantity.min' => 'Jumlah minimal 1.',
-            'quantity.max' => 'Stok tidak mencukupi! Maksimal :max ' . $this->route('product')->unit,
+            'quantity.max' => 'Stok tidak mencukupi! Maksimal :max',
         ];
     }
 }
